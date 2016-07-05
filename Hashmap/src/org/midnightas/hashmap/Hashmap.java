@@ -146,7 +146,15 @@ public class Hashmap implements Runnable {
 			else if (c == 'd') {
 				if (peek() instanceof Character)
 					push((double) pop(Character.class));
-				else
+				else if (peek() instanceof List) {
+					List<Object> newList = new ArrayList<Object>();
+					for (Object o : pop(List.class))
+						if (o instanceof String)
+							newList.add(Double.parseDouble(o.toString()));
+						else if (o instanceof Character)
+							newList.add((double) ((int) o));
+					push(newList);
+				} else
 					push(Double.parseDouble(pop(Object.class) + ""));
 			} else if (c == 's') {
 				if (peek() instanceof String) {
@@ -157,6 +165,11 @@ public class Hashmap implements Runnable {
 						push((pop(Object.class) + "").toUpperCase());
 					else if (c0 == 'r')
 						push(new StringBuilder(pop(String.class)).reverse().toString());
+				} else if (peek() instanceof List) {
+					List<Object> newList = new ArrayList<Object>();
+					for (Object o : pop(List.class))
+						newList.add(o.toString());
+					push(newList);
 				} else
 					push(pop(Object.class) + "");
 			} else if (c == 'c') {
@@ -230,19 +243,19 @@ public class Hashmap implements Runnable {
 				}
 			} else if (c == '.')
 				stack.clear();
-			else if(c == 'p')
+			else if (c == 'p')
 				pop(Object.class);
 			else if (c == '!')
 				return false;
 			else if (c == 'ģ')
 				System.out.println(peek().getClass());
-			else if(c == 'Ĥ') {
+			else if (c == 'Ĥ') {
 				List<Object> list = pop(List.class);
 				List<Object> newList = new ArrayList<Object>();
 				List<Object> currentList = new ArrayList<Object>();
 				Object obj = list.get(0);
-				for(Object o : list) {
-					if(!obj.equals(o)) {
+				for (Object o : list) {
+					if (!obj.equals(o)) {
 						newList.add(currentList);
 						currentList = new ArrayList<Object>();
 					}
@@ -251,6 +264,12 @@ public class Hashmap implements Runnable {
 				}
 				newList.add(currentList);
 				push(newList);
+			} else if (c == 'ĥ') {
+				String[] array = pop(String.class, 1).split(pop(String.class));
+				List<Object> list = new ArrayList<Object>();
+				for(String str : array)
+					list.add(str);
+				push(list);
 			}
 		}
 		return true;
