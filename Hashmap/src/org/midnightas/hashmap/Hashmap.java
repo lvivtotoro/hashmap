@@ -236,6 +236,22 @@ public class Hashmap implements Runnable {
 				return false;
 			else if (c == 'ģ')
 				System.out.println(peek().getClass());
+			else if(c == 'Ĥ') {
+				List<Object> list = pop(List.class);
+				List<Object> newList = new ArrayList<Object>();
+				List<Object> currentList = new ArrayList<Object>();
+				Object obj = list.get(0);
+				for(Object o : list) {
+					if(!obj.equals(o)) {
+						newList.add(currentList);
+						currentList = new ArrayList<Object>();
+					}
+					currentList.add(o);
+					obj = o;
+				}
+				newList.add(currentList);
+				push(newList);
+			}
 		}
 		return true;
 	}
