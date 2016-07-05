@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>hashmap by lvivtotoro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">hashmap</h1>
+      <h2 class="project-tagline">An esoteric programming language</h2>
+      <a href="https://github.com/lvivtotoro/hashmap" class="btn">View on GitHub</a>
+      <a href="https://github.com/lvivtotoro/hashmap/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/lvivtotoro/hashmap/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="how-to-use-hashmap" class="anchor" href="#how-to-use-hashmap" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>How to use Hashmap</h1>
+
+<h2>
+<a id="pushing-things-in" class="anchor" href="#pushing-things-in" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Pushing things in</h2>
+
+<p>Numbers <code>0</code> through <code>9</code> push their self into the stack. <code>10</code> pushes <code>1</code> and <code>0</code> into the stack, not <code>10</code>.<br>
+Text between 2 <code>"</code> characters are pushed in as a string.<br>
+Characters are pushed in using <code>'</code>. Example: <code>'a</code> pushes the character <code>a</code> into the stack.  </p>
+
+<h2>
+<a id="math" class="anchor" href="#math" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Math</h2>
+
+<p>(The following command pop at least one value.)<br>
+<code>+</code> pushes in the sum.<br>
+<code>-</code> subtracts the last value from the 2-last.<br>
+<code>*</code> multiplies the 2 latest items.<br>
+<code>/</code> divides the last value from the 2-last.<br>
+<code>^</code> Exponent operator.<br>
+<code>m</code> is a double-character command:  </p>
+
+<ul>
+<li>
+<code>mq</code> pops the latest value and pushes in the square root.</li>
+<li>
+<code>mf</code> floors the value</li>
+<li>
+<code>mc</code> ceils the value</li>
+<li>
+<code>ma</code> pushes the absolute value</li>
+</ul>
+
+<h2>
+<a id="type-conversion" class="anchor" href="#type-conversion" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Type conversion</h2>
+
+<p><code>s</code> Converts anything into a string.<br>
+<code>d</code> Converts a string into a number that the string represents, and converts a character into it's number representation.<br>
+<code>c</code> Converts a number into it's character representation or gets the first character of a string.  </p>
+
+<h2>
+<a id="operations-on-strings" class="anchor" href="#operations-on-strings" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Operations on strings</h2>
+
+<p><code>s</code> does not only convert anything into a string. If the value is already a string then it needs another command in front of it to perform something on the string:<br>
+<code>sl</code> Converts a string to lowercase.<br>
+<code>su</code> Converts a string to uppercase.<br>
+<code>sr</code> Reverses a string.  </p>
+
+<h2>
+<a id="getting-input" class="anchor" href="#getting-input" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Getting input</h2>
+
+<p><code>i</code> Push the input as a string.<br>
+<code>h</code> Short for <code>id</code>.  </p>
+
+<h2>
+<a id="variables" class="anchor" href="#variables" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Variables</h2>
+
+<p><code>:</code> Pop a value into a variable.<br>
+The variable name is one character (Any character available in the encoding used to read the file).<br>
+<code>5:A</code> puts the number <code>5</code> into the variable <code>A</code>.<br>
+<code>;</code> Pushes a variable into the stack.<br>
+<code>;A</code> pushes 5 to the stack, in this case.</p>
+
+<h2>
+<a id="code-blocks" class="anchor" href="#code-blocks" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Code Blocks</h2>
+
+<p>Kind of taken from CJam, a Code Block is basically a function with no name but can be assigned to variables.<br>
+Code in between <code>{</code> and <code>}</code> is put in a code block.<br>
+Nested code blocks are allowed.<br>
+<code>&gt;</code> runs a code block (also pops it)  </p>
+
+<h2>
+<a id="outputting" class="anchor" href="#outputting" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Outputting</h2>
+
+<p><code>|</code> prints the entire stack, <code>l</code> prints only the latest value.  </p>
+
+<h2>
+<a id="clearing-the-stack" class="anchor" href="#clearing-the-stack" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Clearing the stack</h2>
+
+<p><code>.</code> Pops everything in the stack.<br>
+<code>p</code> Pops the latest value.  </p>
+
+<h2>
+<a id="for-loops" class="anchor" href="#for-loops" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>For loops</h2>
+
+<p>A pretty big topic on esoteric programming languages.<br>
+A for loop basically repeats a function with at least one different argument until it reaches the end of a list or an iterable.<br>
+The first argument is a code block, the second is the object to iterate.<br>
+This object can be an array. If it's a string, then the for loop iterates over the characters in the string.<br>
+The third argument a character. This character will be the name of a variable only useable in the for-loop.<br>
+Example:<br>
+<code>{;a|.}i'af</code> Performs a for-loop on the input, puts every object in this iterable in the <code>a</code> variable.<br>
+That program prints every character in the input.  </p>
+
+<h2>
+<a id="while-loops" class="anchor" href="#while-loops" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>While loops</h2>
+
+<p>While loops are incredibly giltchy, and I strongly advise not to use them.<br>
+The <code>&lt;</code> command performs a while loop. It's argument is a Code Block.<br>
+The <code>!</code> symbol breaks out of a while loop.  </p>
+
+<h2>
+<a id="comparing-values" class="anchor" href="#comparing-values" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Comparing values</h2>
+
+<p>The <code>=</code> needs 2 arguments. It is the 2 values to compare.<br>
+The command then pushes either a <code>true</code> or a <code>false</code>.  </p>
+
+<h2>
+<a id="if-statements" class="anchor" href="#if-statements" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>If statements</h2>
+
+<p>The <code>?</code> command runs a code block if a value is <code>true</code>.<br>
+The first argument is the boolean and the second one is the the code block.<br>
+Example: <code>22={"yes"}?</code><br>
+That example always prints out "yes" as 2 is equal to 2.  </p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/lvivtotoro/hashmap">hashmap</a> is maintained by <a href="https://github.com/lvivtotoro">lvivtotoro</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
