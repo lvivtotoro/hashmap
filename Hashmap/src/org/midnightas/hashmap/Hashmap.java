@@ -267,10 +267,12 @@ public class Hashmap implements Runnable {
 			} else if (c == 'ĥ') {
 				String[] array = pop(String.class, 1).split(pop(String.class));
 				List<Object> list = new ArrayList<Object>();
-				for(String str : array)
+				for (String str : array)
 					list.add(str);
 				push(list);
-			}
+			} else if (c == 'Đ')
+				for (Object o : pop(List.class))
+					push(o);
 		}
 		return true;
 	}
