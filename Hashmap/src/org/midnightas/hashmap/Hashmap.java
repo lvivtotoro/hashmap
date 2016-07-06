@@ -48,6 +48,10 @@ public class Hashmap implements Runnable {
 		return list;
 	}
 
+	public static String removeCharFromString(String str, int index) {
+		return str.substring(0, index) + str.substring(index + 1);
+	}
+
 	public List<ArrayList<Object>> arrays = new ArrayList<>();
 	public HashMap<Character, Object> scope = new HashMap<>();
 	public List<Object> stack = new ArrayList<>();
