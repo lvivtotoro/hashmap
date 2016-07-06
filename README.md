@@ -1,4 +1,4 @@
-# ![hashmap logo](http://i.imgur.com/b38LuUE.gifv)
+# ![hashmap logo](http://i.imgur.com/OfMyUB8.png)
 
     java -jar hashmap.jar -i (.hm file location)
 
