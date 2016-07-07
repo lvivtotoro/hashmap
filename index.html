@@ -81,6 +81,22 @@ The variable name is one character (Any character available in the encoding used
 <code>;</code> Pushes a variable into the stack.<br>
 <code>;A</code> pushes 5 to the stack, in this case.</p>
 
+<h3>
+<a id="additions-to-variables-in-v3" class="anchor" href="#additions-to-variables-in-v3" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Additions to variables in v3</h3>
+
+<p>v3 added:<br>
+<code>G</code> A command that takes a string and get the value of a variable by the name (that is the value of that argument)<br>
+<code>S</code> Set the variable by the name (that is the value of the first argument) to the value of the second argument. 
+v3 also added the ability to assign strings to variable names.<br>
+The following can be called a function:  </p>
+
+<pre><code>{
+    &gt;&gt;&gt; function data here
+}:"function name here with quotes"
+</code></pre>
+
+<p>Why did I use <code>&gt;&gt;&gt;</code> in that code? Read on...</p>
+
 <h2>
 <a id="code-blocks" class="anchor" href="#code-blocks" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Code Blocks</h2>
 
@@ -131,13 +147,36 @@ The command then pushes either a <code>true</code> or a <code>false</code>.  </p
 <p>The <code>?</code> command runs a code block if a value is <code>true</code>.<br>
 The first argument is the boolean and the second one is the the code block.<br>
 Example: <code>22={"yes"}?</code><br>
-That example always prints out "yes" as 2 is equal to 2.  </p>
+That example always prints out "yes" as 2 is equal to 2.<br>
+<strong>Very important note! v3 switched the arguments to the if statements!</strong></p>
 
 <h2>
 <a id="other-things" class="anchor" href="#other-things" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Other things</h2>
 
 <p><code>Ĥ</code> splits a list into groups of different values.<br>
 Example: <code>[5 5 4 6 9 9 9]Ĥ</code> creates a list of: <code>[[5 5] [4] [6] [9 9 9]]</code></p>
+
+<h1>
+<a id="everything-after-this-is-for-v3" class="anchor" href="#everything-after-this-is-for-v3" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Everything after this is for v3+</h1>
+
+<h2>
+<a id="not-operator" class="anchor" href="#not-operator" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>NOT operator</h2>
+
+<p>The <code>N</code> command inverts a boolean:</p>
+
+<pre><code>22=  &gt;&gt;&gt; this is true, as 2 and 2 are equal
+22=N &gt;&gt;&gt; this is false, as we've used N here
+</code></pre>
+
+<h2>
+<a id="confusing-stuff-also-added-in-v3" class="anchor" href="#confusing-stuff-also-added-in-v3" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Confusing stuff also added in v3</h2>
+
+<p>Not only did v3 add more features to variables, it also the feature to leave comments in your code:  </p>
+
+<pre><code>&gt;&gt;&gt; comment here
+</code></pre>
+
+<p>A comment is defined by 3 greater-than symbols.</p>
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/lvivtotoro/hashmap">hashmap</a> is maintained by <a href="https://github.com/lvivtotoro">lvivtotoro</a>.</span>
