@@ -13,6 +13,7 @@ import java.util.Scanner;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
+import org.apache.commons.lang3.StringEscapeUtils;
 
 public class Hashmap implements Runnable {
 
@@ -37,7 +38,9 @@ public class Hashmap implements Runnable {
 					System.out.print((int) Math.floor((double) o));
 				else
 					System.out.print(o);
-			} else
+			} else if (o instanceof String)
+				System.out.print(StringEscapeUtils.unescapeJava(o + ""));
+			else
 				System.out.print(o);
 	}
 
@@ -52,10 +55,11 @@ public class Hashmap implements Runnable {
 		return str.substring(0, index) + str.substring(index + 1);
 	}
 
-	public List<ArrayList<Object>> arrays = new ArrayList<>();
-	public HashMap<Character, Object> scope = new HashMap<>();
-	public List<Object> stack = new ArrayList<>();
+	public List<ArrayList<Object>> arrays = new ArrayList<ArrayList<Object>>();
+	public HashMap<String, Object> scope = new HashMap<String, Object>();
+	public List<Object> stack = new ArrayList<Object>();
 	public String content;
+	public boolean running = false;
 
 	public Hashmap(CommandLine args) throws HashmapException, UnsupportedEncodingException, IOException {
 		if (!args.hasOption("i"))
@@ -65,6 +69,7 @@ public class Hashmap implements Runnable {
 	}
 
 	public void run() {
+		running = true;
 		interpret(0, false);
 		printList(stack);
 	}
@@ -72,7 +77,10 @@ public class Hashmap implements Runnable {
 	@SuppressWarnings("unchecked")
 	public boolean interpret(int tlstart, boolean isWhile) {
 		int deep = 0;
+		HashMap<String, Object> tempVars = new HashMap<String, Object>();
 		for (int tl = tlstart; tl < content.length(); tl++) {
+			if (!running)
+				return false;
 			char c = content.charAt(tl);
 			if (c >= '0' && c <= '9')
 				push(Double.parseDouble(c + ""));
@@ -122,7 +130,14 @@ public class Hashmap implements Runnable {
 						return false;
 				}
 			} else if (c == '>') {
-				interpret(pop(Codeblock.class).tl, false);
+				if (tl < content.length() - 2 && content.charAt(tl + 1) == '>' && content.charAt(tl + 2) == '>') {
+					for (int tl0 = tl; tl0 < content.length(); tl0++)
+						if (content.charAt(tl0) == '\n') {
+							tl = tl0;
+							break;
+						}
+				} else
+					interpret(pop(Codeblock.class).tl, false);
 			} else if (c == '\"') {
 				String s = "";
 				for (int tl0 = tl + 1; tl0 < content.length(); tl0++) {
@@ -210,7 +225,7 @@ public class Hashmap implements Runnable {
 			else if (c == '<') {
 				Codeblock codeblock = pop(Codeblock.class);
 				interpret(codeblock.tl, true);
-				isWhile = false;
+				System.out.println("test");
 			} else if (c == '|') {
 				printList(stack);
 				System.out.println();
@@ -219,19 +234,51 @@ public class Hashmap implements Runnable {
 				System.out.println();
 			} else if (c == ':') {
 				char c0 = content.charAt(++tl);
-				scope.remove(c0);
-				scope.put(c0, pop(Object.class));
-			} else if (c == ';')
-				push(scope.get(content.charAt(++tl)));
-			else if (c == '=')
+				String varName = "";
+				if (c0 == '"') {
+					for (int tl1 = tl + 1; tl1 < content.length(); tl1++) {
+						char c1 = content.charAt(tl1);
+						if (c1 == '"') {
+							tl = tl1;
+							break;
+						} else
+							varName += c1;
+					}
+				} else
+					varName = c0 + "";
+				scope.remove(varName);
+				if (varName.startsWith("$"))
+					tempVars.put(varName, pop(Object.class));
+				else
+					scope.put(varName, pop(Object.class));
+			} else if (c == ';') {
+				char c0 = content.charAt(++tl);
+				String varName = "";
+				if (c0 == '"') {
+					for (int tl1 = tl + 1; tl1 < content.length(); tl1++) {
+						char c1 = content.charAt(tl1);
+						if (c1 == '"') {
+							tl = tl1;
+							break;
+						} else
+							varName += c1;
+					}
+				} else
+					varName = c0 + "";
+				if (varName.startsWith("$"))
+					push(tempVars.get(varName));
+				else
+					push(scope.get(varName));
+			} else if (c == '=')
 				push(pop(Object.class).equals(pop(Object.class)));
 			else if (c == '?') {
+				boolean condition = pop(Boolean.class);
 				Codeblock codeblock = pop(Codeblock.class);
-				if (pop(Boolean.class))
+				if (condition)
 					if (!interpret(codeblock.tl, false))
 						return false;
 			} else if (c == 'f') {
-				char charToPutVarInto = pop(Character.class);
+				Object charToPutVarInto = pop(Object.class);
 				Object objToIterate = pop(Object.class);
 				Codeblock codeblock = pop(Codeblock.class);
 				ArrayList<Object> iterator = new ArrayList<Object>();
@@ -242,16 +289,17 @@ public class Hashmap implements Runnable {
 					iterator.addAll((List<?>) objToIterate);
 				for (Object o : iterator) {
 					scope.remove(charToPutVarInto);
-					scope.put(charToPutVarInto, o);
+					scope.put(charToPutVarInto + "", o);
 					interpret(codeblock.tl, false);
 				}
 			} else if (c == '.')
 				stack.clear();
 			else if (c == 'p')
 				pop(Object.class);
-			else if (c == '!')
-				return false;
-			else if (c == 'ģ')
+			else if (c == '!') {
+				running = false;
+				continue;
+			} else if (c == 'ģ')
 				System.out.println(peek().getClass());
 			else if (c == 'Ĥ') {
 				List<Object> list = pop(List.class);
@@ -277,6 +325,22 @@ public class Hashmap implements Runnable {
 			} else if (c == 'Đ')
 				for (Object o : pop(List.class))
 					push(o);
+			else if (c == 'N')
+				push(!pop(Boolean.class));
+			else if (c == 'G') {
+				String varName = pop(Object.class) + "";
+				Object value = varName.startsWith("$") ? tempVars.get(varName) : scope.get(varName);
+				push(value);
+			} else if (c == 'S') {
+				Object value = pop(Object.class);
+				Object varName = pop(Object.class);
+				if (varName instanceof Double && (varName + "").endsWith(".0"))
+					varName = varName.toString().substring(0, varName.toString().length() - 2);
+				if (varName.toString().startsWith("$"))
+					tempVars.put(varName.toString(), value);
+				else
+					scope.put(varName.toString(), value);
+			}
 		}
 		return true;
 	}
