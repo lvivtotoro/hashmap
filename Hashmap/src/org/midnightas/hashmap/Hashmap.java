@@ -340,7 +340,8 @@ public class Hashmap implements Runnable {
 					tempVars.put(varName.toString(), value);
 				else
 					scope.put(varName.toString(), value);
-			}
+			} else if(c == 'L')
+				push((double) pop(Object.class).toString().length());
 		}
 		return true;
 	}
