@@ -8,16 +8,6 @@
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
     <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
-    <script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-  ga('create', 'UA-40667713-3', 'auto');
-  ga('send', 'pageview');
-
-</script>
   </head>
   <body>
     <section class="page-header">
@@ -89,7 +79,16 @@ Characters are pushed in using <code>'</code>. Example: <code>'a</code> pushes t
 The variable name is one character (Any character available in the encoding used to read the file).<br>
 <code>5:A</code> puts the number <code>5</code> into the variable <code>A</code>.<br>
 <code>;</code> Pushes a variable into the stack.<br>
-<code>;A</code> pushes 5 to the stack, in this case.</p>
+<code>;A</code> pushes 5 to the stack, in this case.  </p>
+
+<p>v4 added the function-scope variables, that are removed after the code ran ended.<br>
+These function-scope variables are used in code blocks to be removed after usage.<br>
+To create a function-scope variables (FSV for short):</p>
+
+<pre><code>5:"$a"
+</code></pre>
+
+<p>That code placed <code>5</code> in a FSV called <code>a</code>.</p>
 
 <h3>
 <a id="additions-to-variables-in-v3" class="anchor" href="#additions-to-variables-in-v3" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Additions to variables in v3</h3>
@@ -187,6 +186,14 @@ Example: <code>[5 5 4 6 9 9 9]Ĥ</code> creates a list of: <code>[[5 5] [4] [6] 
 </code></pre>
 
 <p>A comment is defined by 3 greater-than symbols.</p>
+
+<h1>
+<a id="v4" class="anchor" href="#v4" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>v4+</h1>
+
+<p>v4 added an API in hashmap, and added a Java API for developers to parse hashmap code. With the Java API, developers can put in their own functions for the hashmap API. v4.5 will create a plugin system for Java developers to put their hashmap plugin in a folder for ease of use for hashmap users.
+v4 also allowed using commands that modify the stack while creating an array.</p>
+
+<p><code>L</code> Get the length of anything as a string.</p>
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/lvivtotoro/hashmap">hashmap</a> is maintained by <a href="https://github.com/lvivtotoro">lvivtotoro</a>.</span>
