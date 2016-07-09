@@ -190,10 +190,34 @@ Example: <code>[5 5 4 6 9 9 9]Ĥ</code> creates a list of: <code>[[5 5] [4] [6] 
 <h1>
 <a id="v4" class="anchor" href="#v4" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>v4+</h1>
 
-<p>v4 added an API in hashmap, and added a Java API for developers to parse hashmap code. With the Java API, developers can put in their own functions for the hashmap API. v4.5 will create a plugin system for Java developers to put their hashmap plugin in a folder for ease of use for hashmap users.
-v4 also allowed using commands that modify the stack while creating an array.</p>
+<p>v4 added an API in hashmap, and added a Java API for developers to parse hashmap code. With the Java API, developers can put in their own functions for the hashmap API.<br>
+v4 also allowed using commands that modify the stack while creating an array.  </p>
+
+<p>A giant thing v4 added is an API.<br>
+To call an API function:  </p>
+
+<pre><code>;"apiname.apifunction"&gt; &gt;&gt;&gt; Just like how to call a codeblock in a variable.
+</code></pre>
+
+<p>Scroll down to see all of the builtin APIs.  </p>
 
 <p><code>L</code> Get the length of anything as a string.</p>
+
+<h1>
+<a id="default-apis" class="anchor" href="#default-apis" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Default APIs</h1>
+
+<p>While Java developers can add in their own API functions to deal with more low-level stuff (more low-level than hashmap),
+there already exists some default APIs for hashmap.</p>
+
+<h2>
+<a id="the-io-api-v4" class="anchor" href="#the-io-api-v4" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The <code>io</code> API (v4)</h2>
+
+<p><code>io.read</code> Pop value (a file path), push the file content.<br>
+<code>io.write</code> First argument, content to append. Second argument, file path.<br>
+<code>io.overwrite</code> First second, content to overwrite file with. Second argument, file path.<br>
+<code>io.curdir</code> Push working directory path.<br>
+<code>io.curfile</code> Push working file path.<br>
+<code>io.curexecutor</code> Push interpreter file path.</p>
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/lvivtotoro/hashmap">hashmap</a> is maintained by <a href="https://github.com/lvivtotoro">lvivtotoro</a>.</span>
