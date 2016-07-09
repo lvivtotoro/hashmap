@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 import org.apache.commons.cli.CommandLine;
@@ -19,12 +20,14 @@ public class Hashmap implements Runnable {
 
 	public static Scanner scanner = new Scanner(System.in);
 
+	public static HashMap<Byte, Character> codepage = new HashMap<Byte, Character>();
+
 	public static void main(String[] args) {
 		Options options = new Options();
 		options.addOption("i", "input", true, "The input file.");
 		options.addOption("e", "encoding", true, "The encoding to read the file in, UTF-8 is recommended.");
 		try {
-			new Hashmap(new DefaultParser().parse(options, args)).run();
+			new Hashmap(new DefaultParser().parse(options, args)).registerDefaultFunctions().run();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -55,19 +58,27 @@ public class Hashmap implements Runnable {
 		return str.substring(0, index) + str.substring(index + 1);
 	}
 
+	public HashMap<String, BuiltinFunction> functions = new HashMap<String, BuiltinFunction>();
 	public List<ArrayList<Object>> arrays = new ArrayList<ArrayList<Object>>();
 	public HashMap<String, Object> scope = new HashMap<String, Object>();
 	public List<Object> stack = new ArrayList<Object>();
 	public String content;
+	public File workingFile;
 	public boolean running = false;
 
 	public Hashmap(CommandLine args) throws HashmapException, UnsupportedEncodingException, IOException {
 		if (!args.hasOption("i"))
 			throw new IllegalArgumentException("You forgot the -i option.");
-		this.content = new String(Files.readAllBytes(new File(args.getOptionValue("i")).toPath()),
+		this.workingFile = new File(args.getOptionValue("i"));
+		this.content = new String(Files.readAllBytes(workingFile.toPath()),
 				args.hasOption("e") ? args.getOptionValue("e") : "UTF-8");
 	}
 
+	public Hashmap registerDefaultFunctions() {
+		DefaultBuiltinFunction.register(this);
+		return this;
+	}
+	
 	public void run() {
 		running = true;
 		interpret(0, false);
@@ -136,15 +147,24 @@ public class Hashmap implements Runnable {
 							tl = tl0;
 							break;
 						}
-				} else
-					interpret(pop(Codeblock.class).tl, false);
+				} else {
+					if (peek() instanceof Codeblock)
+						interpret(pop(Codeblock.class).tl, false);
+					else if (peek() instanceof String && existsFunction(peek().toString()))
+						functions.get(pop(String.class)).call(this);
+				}
 			} else if (c == '\"') {
 				String s = "";
 				for (int tl0 = tl + 1; tl0 < content.length(); tl0++) {
 					char c0 = content.charAt(tl0);
-					if (c0 == '\"' && content.charAt(tl0 - 1) != '\\') {
-						tl = tl0;
-						break;
+					if (c0 == '\"') {
+						if (content.charAt(tl0 - 1) == '\\') {
+							s = s.substring(0, s.length() - 1);
+							s += "\"";
+						} else {
+							tl = tl0;
+							break;
+						}
 					} else
 						s += c0;
 				}
@@ -184,6 +204,17 @@ public class Hashmap implements Runnable {
 						push((pop(Object.class) + "").toUpperCase());
 					else if (c0 == 'r')
 						push(new StringBuilder(pop(String.class)).reverse().toString());
+					else if (c0 == 's') {
+						Object o = pop(Object.class, 1);
+						if (o instanceof Double)
+							push(pop(String.class).substring(((Double) o).intValue()));
+						else if (o instanceof List) {
+							String s = pop(String.class);
+							List<Object> l = (List<Object>) o;
+							push(s.substring(((Double) l.get(l.size() - 2)).intValue(),
+									((Double) l.get(l.size() - 1)).intValue()));
+						}
+					}
 				} else if (peek() instanceof List) {
 					List<Object> newList = new ArrayList<Object>();
 					for (Object o : pop(List.class))
@@ -208,9 +239,13 @@ public class Hashmap implements Runnable {
 					push(Math.abs(pop(Double.class)));
 			} else if (c == '[')
 				arrays.add(new ArrayList<>());
-			else if (c == ']')
-				push(arrays.remove(arrays.size() - 1));
-			else if (c == 'a') {
+			else if (c == ']') {
+				if (arrays.size() > 1) {
+					arrays.get(arrays.size() - 2).add(arrays.remove(arrays.size() - 1));
+				} else {
+					stack.add(arrays.remove(arrays.size() - 1));
+				}
+			} else if (c == 'a') {
 				char c0 = content.charAt(++tl);
 				if (c0 == 'f')
 					flatten(pop(List.class));
@@ -340,10 +375,17 @@ public class Hashmap implements Runnable {
 					tempVars.put(varName.toString(), value);
 				else
 					scope.put(varName.toString(), value);
-			} else if(c == 'L')
+			} else if (c == 'L')
 				push((double) pop(Object.class).toString().length());
 		}
 		return true;
+	}
+
+	public boolean existsFunction(String varName) {
+		for (Map.Entry<String, BuiltinFunction> funcs : functions.entrySet())
+			if (funcs.getKey().equals(varName))
+				return true;
+		return false;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -360,7 +402,9 @@ public class Hashmap implements Runnable {
 	}
 
 	public <T> T pop(Class<T> type, int offset) {
-		return type.cast(stack.remove(stack.size() - 1 - offset));
+		return type.cast(
+				arrays.size() > 0 ? arrays.get(arrays.size() - 1).remove(arrays.get(arrays.size() - 1).size() - 1 - offset)
+						: stack.remove(stack.size() - 1 - offset));
 	}
 
 	public Object peek() {
@@ -375,11 +419,30 @@ public class Hashmap implements Runnable {
 	}
 
 	public Object peek(int offset) {
-		return stack.get(stack.size() - 1 - offset);
+		return arrays.size() > 0 ? arrays.get(arrays.size() - 1).get(arrays.get(arrays.size() - 1).size() - 1 - offset)
+				: stack.get(stack.size() - 1 - offset);
 	}
 
 	public Object peek(double offset) {
 		return peek((int) offset);
+	}
+
+	public static byte codepageByte = 0x00;
+
+	public static byte registerCodepageCharacter(char c) {
+		codepage.put(codepageByte, c);
+		byte toReturn = codepageByte;
+		codepageByte = (byte) (codepageByte + 0x01);
+		return toReturn;
+	}
+
+	static {
+		for (int i = 'a'; i <= 'z'; i++)
+			registerCodepageCharacter((char) i);
+		for (int i = 'A'; i <= 'Z'; i++)
+			registerCodepageCharacter((char) i);
+		for (int i = '0'; i <= '9'; i++)
+			registerCodepageCharacter((char) i);
 	}
 
 }
