@@ -9,6 +9,16 @@ A tutorial will be added later.
 
 [https://lvivtotoro.github.io/hashmap/](https://lvivtotoro.github.io/hashmap/)
 
+## How to parse hashmap in Java
+After v4, developers can parse hashmap code in their Java programs.
+
+```java
+Hashmap hashmap = new Hashmap("your hashmap code here", workingFile);
+hashmap.registerDefaultFunctions();
+```
+The `workingFile` field is the file where the hashmap code is at.  
+`hashmap.registerDefaultFunctions();` adds the default builtin functions such as the `io` library, so it's optional.
+
 ## Simple programs
 You may add new programs here with pull requests.
 
