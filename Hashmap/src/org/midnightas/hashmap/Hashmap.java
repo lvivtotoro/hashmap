@@ -22,12 +22,17 @@ public class Hashmap implements Runnable {
 
 	public static HashMap<Byte, Character> codepage = new HashMap<Byte, Character>();
 
-	public static void main(String[] args) {
+	public static void main(String[] programArgs) {
 		Options options = new Options();
 		options.addOption("i", "input", true, "The input file.");
 		options.addOption("e", "encoding", true, "The encoding to read the file in, UTF-8 is recommended.");
 		try {
-			new Hashmap(new DefaultParser().parse(options, args)).registerDefaultFunctions().run();
+			CommandLine args = new DefaultParser().parse(options, programArgs);
+			if (!args.hasOption("i"))
+				throw new IllegalArgumentException("You forgot the -i option.");
+			File f = new File(args.getOptionValue("i"));
+			new Hashmap(new String(Files.readAllBytes(f.toPath()),
+					args.hasOption("e") ? args.getOptionValue("e") : "UTF-8"), f).registerDefaultFunctions().run();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -66,19 +71,17 @@ public class Hashmap implements Runnable {
 	public File workingFile;
 	public boolean running = false;
 
-	public Hashmap(CommandLine args) throws HashmapException, UnsupportedEncodingException, IOException {
-		if (!args.hasOption("i"))
-			throw new IllegalArgumentException("You forgot the -i option.");
-		this.workingFile = new File(args.getOptionValue("i"));
-		this.content = new String(Files.readAllBytes(workingFile.toPath()),
-				args.hasOption("e") ? args.getOptionValue("e") : "UTF-8");
+	public Hashmap(String content, File workingFile)
+			throws HashmapException, UnsupportedEncodingException, IOException {
+		this.workingFile = workingFile;
+		this.content = content;
 	}
 
 	public Hashmap registerDefaultFunctions() {
 		DefaultBuiltinFunction.register(this);
 		return this;
 	}
-	
+
 	public void run() {
 		running = true;
 		interpret(0, false);
@@ -402,9 +405,9 @@ public class Hashmap implements Runnable {
 	}
 
 	public <T> T pop(Class<T> type, int offset) {
-		return type.cast(
-				arrays.size() > 0 ? arrays.get(arrays.size() - 1).remove(arrays.get(arrays.size() - 1).size() - 1 - offset)
-						: stack.remove(stack.size() - 1 - offset));
+		return type.cast(arrays.size() > 0
+				? arrays.get(arrays.size() - 1).remove(arrays.get(arrays.size() - 1).size() - 1 - offset)
+				: stack.remove(stack.size() - 1 - offset));
 	}
 
 	public Object peek() {
