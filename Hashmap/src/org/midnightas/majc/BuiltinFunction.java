@@ -1,4 +1,4 @@
-package org.midnightas.hashmap;
+package org.midnightas.majc;
 
 public abstract class BuiltinFunction {
 	
@@ -10,12 +10,12 @@ public abstract class BuiltinFunction {
 		this.varname = var;
 	}
 	
-	public BuiltinFunction register(Hashmap hashmap) {
+	public BuiltinFunction register(Majc hashmap) {
 		hashmap.functions.put(varname, this);
 		hashmap.scope.put(clazz + "." + name, varname);
 		return this;
 	}
 	
-	public abstract void call(Hashmap hashmap);
+	public abstract void call(Majc hashmap);
 	
 }

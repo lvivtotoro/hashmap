@@ -1,4 +1,4 @@
-package org.midnightas.hashmap;
+package org.midnightas.majc;
 
 public class Codeblock {
 	

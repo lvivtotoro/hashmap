@@ -1,7 +1,10 @@
-package org.midnightas.hashmap;
+package org.midnightas.majc;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -16,13 +19,10 @@ import java.util.concurrent.ThreadLocalRandom;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
+import org.apache.commons.io.input.CloseShieldInputStream;
 import org.apache.commons.lang3.StringEscapeUtils;
 
-public class Hashmap implements Runnable {
-
-	public static Scanner scanner = new Scanner(System.in);
-
-	public static HashMap<Byte, Character> codepage = new HashMap<Byte, Character>();
+public class Majc implements Runnable, Closeable {
 
 	public static void main(String[] programArgs) {
 		Options options = new Options();
@@ -33,12 +33,13 @@ public class Hashmap implements Runnable {
 			if (!args.hasOption("i"))
 				throw new IllegalArgumentException("You forgot the -i option.");
 			File f = new File(args.getOptionValue("i"));
-			new Hashmap(new String(Files.readAllBytes(f.toPath()),
-					args.hasOption("e") ? args.getOptionValue("e") : "UTF-8"), f).registerDefaultFunctions().run();
+			Majc majc = new Majc(new String(Files.readAllBytes(f.toPath()),
+					args.hasOption("e") ? args.getOptionValue("e") : "UTF-8"), f);
+			majc.registerDefaultFunctions().run();
+			majc.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		scanner.close();
 	}
 
 	public static void printList(List<Object> list) {
@@ -72,14 +73,17 @@ public class Hashmap implements Runnable {
 	public String content;
 	public File workingFile;
 	public boolean running = false;
+	public InputStream in = System.in;
+	public PrintStream out = System.out, err = System.err;
+	public Scanner scanner = new Scanner(new CloseShieldInputStream(in));
 
-	public Hashmap(String content, File workingFile)
-			throws HashmapException, UnsupportedEncodingException, IOException {
+	public Majc(String content, File workingFile)
+			throws MajcException, UnsupportedEncodingException, IOException {
 		this.workingFile = workingFile;
 		this.content = content;
 	}
 
-	public Hashmap registerDefaultFunctions() {
+	public Majc registerDefaultFunctions() {
 		DefaultBuiltinFunction.register(this);
 		return this;
 	}
@@ -402,6 +406,11 @@ public class Hashmap implements Runnable {
 		return true;
 	}
 
+	@Override
+	public void close() throws IOException {
+		scanner.close();
+	}
+	
 	public boolean existsFunction(String varName) {
 		for (Map.Entry<String, BuiltinFunction> funcs : functions.entrySet())
 			if (funcs.getKey().equals(varName))
@@ -446,24 +455,6 @@ public class Hashmap implements Runnable {
 
 	public Object peek(double offset) {
 		return peek((int) offset);
-	}
-
-	public static byte codepageByte = 0x00;
-
-	public static byte registerCodepageCharacter(char c) {
-		codepage.put(codepageByte, c);
-		byte toReturn = codepageByte;
-		codepageByte = (byte) (codepageByte + 0x01);
-		return toReturn;
-	}
-
-	static {
-		for (int i = 'a'; i <= 'z'; i++)
-			registerCodepageCharacter((char) i);
-		for (int i = 'A'; i <= 'Z'; i++)
-			registerCodepageCharacter((char) i);
-		for (int i = '0'; i <= '9'; i++)
-			registerCodepageCharacter((char) i);
 	}
 
 }
