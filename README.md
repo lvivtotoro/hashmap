@@ -7,7 +7,7 @@ A tutorial will be added later.
 
 ## How to program in Majc
 
-[https://lvivtotoro.github.io/hashmap/](https://lvivtotoro.github.io/hashmap/)
+[https://lvivtotoro.github.io/majc/](https://lvivtotoro.github.io/majc/)
 
 ## How to parse Majc in Java
 After v4, developers can parse Majc code in their Java programs.
