@@ -9,7 +9,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Scanner;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
@@ -380,6 +382,22 @@ public class Hashmap implements Runnable {
 					scope.put(varName.toString(), value);
 			} else if (c == 'L')
 				push((double) pop(Object.class).toString().length());
+			else if(c == 'R') {
+				char c0 = content.charAt(++tl);
+				if(c0 == 'i')
+					push(new Random().nextInt(pop(Double.class).intValue()));
+				else if(c0 == 'd')
+					push(ThreadLocalRandom.current().nextDouble(pop(Double.class)));
+			} else if(c == 'r') {
+				char c0 = content.charAt(++tl);
+				char c01 = content.charAt(++tl);
+				int i0 = Math.min(c0, c01);
+				int i1 = Math.max(c0, c01);
+				List<Character> chars = new ArrayList<Character>();
+				for(; i0 <= i1; i0++)
+					chars.add((char) i0);
+				push(chars);
+			}
 		}
 		return true;
 	}
