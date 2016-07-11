@@ -13,9 +13,9 @@ A tutorial will be added later.
 After v4, developers can parse Majc code in their Java programs.
 
 ```java
-Hashmap hashmap = new Hashmap("your Majc code here", workingFile);
-hashmap.registerDefaultFunctions();
-hashmap.interpret(0, false);
+Majc majc = new Majc("your Majc code here", workingFile);
+majc.registerDefaultFunctions();
+majc.interpret(0, false);
 ```
 The `workingFile` field is the file where the Majc code is at.  
 `hashmap.registerDefaultFunctions();` adds the default builtin functions such as the `io` library, so it's optional.  
