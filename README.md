@@ -1,4 +1,4 @@
-# ![hashmap logo](http://i.imgur.com/OfMyUB8.png)
+# ![hashmap logo](http://i.imgur.com/UF0ULuT.png)
 **This is not necessarily a golfing language.**
 
     java -jar hashmap.jar -i (.hm file location)
